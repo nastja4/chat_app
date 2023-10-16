@@ -1,7 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Image} from 'react-native';
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Image, KeyboardAvoidingView} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+// import { Svg, Image as SvgImage } from 'react-native-svg';
 
 
 const Start = ({ navigation }) => {
@@ -10,21 +12,27 @@ const Start = ({ navigation }) => {
 
 
   return (    
+    // <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+
     <ImageBackground source={require('../assets/Background-image.png')} style={styles.StartImage} >
       <View style={styles.container}>
         {/* <Text style={styles.appTitle}>Bona Chat</Text> */}
         <Image source={require('../assets/bona-chat.png')} style={{ width: 600, height: 600 }} />    
       </View >  
+      
       <View style={[styles.container, styles.inputContainer]}> 
-        <View style={styles.inputSector}>
-          {/* <Icon name='user' style={styles.icon} /> */}
-          {/* <Image source={require('../assets/icon.svg')} style={styles.icon}/> */}
-          <TextInput 
-            style={styles.textInput}
-            value={name}
-            onChangeText={setName}
-            placeholder='Your name'
-          />
+        <View style={styles.textInputSector}>
+          <View style={styles.inputContent}>          
+            <Icon name="user" style={styles.icon} />
+            <TextInput 
+              style={styles.textInput}
+              value={name}
+              onChangeText={setName}
+              placeholder='Your name'
+              caretHidden={true} // Hide the cursor
+              selectionColor="black" // the desired cursor color
+            />
+          </View>
         </View>
 
         <Text style={styles.textBgColorSelectot}>Choose background color:</Text>
@@ -36,26 +44,19 @@ const Start = ({ navigation }) => {
               {backgroundColor: '#F8A387'} // 1.coral          
             ]}
             onPress={() => setbackgroundColor('#F8A387') }
-          >            
-          </TouchableOpacity>
-
-
+          />                      
           <TouchableOpacity 
             style={[
               styles.coloredCircle,
               backgroundColor === '#85B80F' && styles.selectedCircle,
               {backgroundColor: '#85B80F'} // 2.light green          
-            ]}
-            // style={[
-            //   styles.coloredCircle,
-            //   styles.selectedCircle,
-            //   {backgroundColor: '#85B80F'} // light green          
-            // ]}
+            ]}            
             onPress={() => setbackgroundColor('#85B80F') }
           />
           <TouchableOpacity 
             style={[
               styles.coloredCircle,
+              backgroundColor === '#E4A5C4' && styles.selectedCircle,
               {backgroundColor: '#E4A5C4'} // 3.violet          
             ]}
             onPress={() => setbackgroundColor('#E4A5C4') }
@@ -63,6 +64,7 @@ const Start = ({ navigation }) => {
           <TouchableOpacity 
             style={[
               styles.coloredCircle,
+              backgroundColor === '#D9F7F7' && styles.selectedCircle,
               {backgroundColor: '#D9F7F7'} // 4.light teal          
             ]}
             onPress={() => setbackgroundColor('#D9F7F7') }
@@ -71,13 +73,14 @@ const Start = ({ navigation }) => {
 
         <TouchableOpacity 
           style={styles.startChattingBtn}
-          onPress={() => navigation.navigate('Chat', { name: name, backgroundColor: backgroundColor })}
+          onPress={() => navigation.navigate('Chat', { name: name, backgroundColor: backgroundColor } )}
         >
-          <Text style={styles.startChattingButtonText}>Start Chating</Text>
+          <Text style={styles.startChattingButtonText}>Start Chatting</Text>
         </TouchableOpacity>
 
-      </View>                
-    </ImageBackground>    
+      </View>        
+    </ImageBackground>  
+    // </KeyboardAvoidingView>  
   );
 }
 
@@ -96,58 +99,54 @@ const styles = StyleSheet.create({
     margin: '6%',
   }, 
 
-  inputSector: {
+  textInputSector: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 5,
-    padding: 10,
-    borderColor: 'lightgray',
+    padding: 3,
+    width: '100%',
+    borderColor: '#000000',
+  },
+
+  inputContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    opacity: 0.7,
   },
 
   icon: {
-    fontSize: 20, // Set the desired font size for the icon
-    marginRight: 10,
+    fontSize: 18, // the desired font size for the icon 'user'
+    marginRight: 5,
   },
 
-  appTitle: {    
-    fontSize: 55,
-    fontWeight: '800',
-    color: '#0039BF',  // bright blue  
-  },
+  // appTitle: {    
+  //   fontSize: 55,
+  //   fontWeight: '800',
+  //   color: '#0039BF',  // bright blue  
+  // },
 
   inputContainer: {
-    backgroundColor: 'white',
-    // padding: '5%',  
+    backgroundColor: 'white',    
   },
 
-  textInput: {
-    // height: 40,
-    // width: "100%",
-    // paddingHorizontal: '3%',
-    // borderWidth: 2,
-    // borderRadius: 5,
+  textInput: {    
     flex: 1,
-    padding: 0,
-
-    // borderColor: 
-    // marginTop: 15,
-    // marginBottom: 15,
-    // alignSelf: 'center',
-    // marginBottom: 30,
+    fontSize: 14,
+    padding: 5,    
   },
 
   textBgColorSelectot: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 15,
+    marginBottom: 5,
     width: '100%',
     marginTop: 35,
   },
 
   colorOptionsContainer: {
-    flexDirection: 'row',
-    // justifyContent: 'space-between',     
+    flexDirection: 'row',        
     width: '100%',
     marginBottom: 35,
   },
@@ -155,15 +154,14 @@ const styles = StyleSheet.create({
   coloredCircle: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    margin: 10,      
-    backgroundColor: 'transparent',
-    borderWidth: 2,    
+    borderRadius: 20,          
+    borderWidth: 1, 
+    borderColor: 'rgba(0, 0, 0, 0.7)',  
+    marginHorizontal: 10,   
   },
 
-  selectedCircle: {
-    borderColor: 'blue', // Change the border color when selected
-    backgroundColor: 'yellow',
+  selectedCircle: {    
+    borderWidth: 3,     
 },
 
   startChattingBtn: {
@@ -180,64 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
     
-
-
-
-    
 });
 
 export default Start;
 
-
-
-
-
-
-
-
-
-
-
-
-
-// /* eslint-disable react/react-in-jsx-scope */
-// import { useState } from 'react';
-// import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
-
-// const Screen1 = ({ navigation }) => {
-// const [name, setName] = useState('');
-
-//   return (
-//     <View style={styles.container}>
-//       <Text>Hello Screen1</Text>
-//       <TextInput 
-//         style={styles.textInput}
-//         value={name}
-//         onChangeText={setName}
-//         placeholder='Type your username here'
-//       />
-//       <Button 
-//         title="Go to Screen2"
-//         onPress={() => navigation.navigate('Screen2', { name: name })}
-//       />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-
-//   textInput: {
-//     width: "88%",
-//     padding: 15,
-//     borderWidth: 1,
-//     marginTop: 15,
-//     marginBottom: 15
-//   }
-// });
-
-// export default Screen1;
