@@ -51,8 +51,16 @@ Follow these steps to get the project up and running on your local machine:
 
 ## Dependencies
 
+## Dependencies
+
+- [React Native](https://reactnative.dev/): A framework for building native mobile applications using JavaScript and React.
+- [Expo](https://expo.io/): An open-source framework and platform for building React Native applications.
+- [Gifted Chat](https://github.com/FaridSafi/react-native-gifted-chat): A library for building chat interfaces in React Native applications.
+- [Firebase](https://firebase.google.com/): A cloud-based platform by Google that provides various services for developing mobile and web applications.
+- [React Navigation](https://reactnavigation.org/): A library for navigation and routing in React Native applications.
 
 ## Contributing
 
+If you'd like to contribute to this project, please open an issue and discuss the changes you would like to make.
 
 ## License
