@@ -99,14 +99,18 @@ const styles = StyleSheet.create({
     margin: '6%',
   }, 
 
+  inputContainer: {  // white conainer with elements
+    backgroundColor: 'white',    
+  },
+
   textInputSector: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 5,
-    padding: 3,
     width: '100%',
     borderColor: '#000000',
+    height: 80,
   },
 
   inputContent: {
@@ -117,44 +121,34 @@ const styles = StyleSheet.create({
   },
 
   icon: {
-    fontSize: 18, // the desired font size for the icon 'user'
-    marginRight: 5,
-  },
-
-  // appTitle: {    
-  //   fontSize: 55,
-  //   fontWeight: '800',
-  //   color: '#0039BF',  // bright blue  
-  // },
-
-  inputContainer: {
-    backgroundColor: 'white',    
+    fontSize: 22, // the desired font size for the icon 'user'
+    marginHorizontal: 5,
   },
 
   textInput: {    
     flex: 1,
-    fontSize: 14,
+    fontSize: 18,
     padding: 5,    
   },
 
-  textBgColorSelectot: {
-    fontSize: 16,
+  textBgColorSelectot: {  // "Choose background color:"
+    fontSize: 18,
     fontWeight: '500',
     marginBottom: 5,
     width: '100%',
-    marginTop: 35,
+    marginTop: 57,
   },
 
   colorOptionsContainer: {
     flexDirection: 'row',        
     width: '100%',
-    marginBottom: 35,
+    marginBottom: 57,
   },
 
   coloredCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,          
+    width: 50,
+    height: 50,
+    borderRadius: 25,          
     borderWidth: 1, 
     borderColor: 'rgba(0, 0, 0, 0.7)',  
     marginHorizontal: 10,   
@@ -167,15 +161,16 @@ const styles = StyleSheet.create({
   startChattingBtn: {
     backgroundColor: '#0039BF', // bright blue  
     borderRadius: 5,    
-    height: 40,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    height: 80,
   },
 
   startChattingButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
+    // fontWeight: 'bold',
   },
     
 });
