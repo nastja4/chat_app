@@ -15,9 +15,15 @@ const App = () => {
     <NavigationContainer>
       {/* Stack navigators are used in React Navigation to manage a stack of screens, where you can navigate forward (push) and backward (pop). */}
       <Stack.Navigator initialRouteName='Start'>        
-        <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="Start" 
+          component={Start} 
+          options={{ headerShown: false }} />
         {/* The title in the app bar for the "Chat" screen will be based on the name parameter that you pass when navigating to the "Chat" screen */}
-        <Stack.Screen name="Chat" component={Chat} options={({ route }) => ({ title: route.params.name })} /> 
+        <Stack.Screen 
+          name="Chat" 
+          component={Chat} 
+          options={({ route }) => ({ title: route.params.name })} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
