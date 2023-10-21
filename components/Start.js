@@ -1,15 +1,34 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Image, KeyboardAvoidingView, Platform} from 'react-native';
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Svg, { Path } from 'react-native-svg';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState('');
   const [backgroundColor, setbackgroundColor] = useState('#F8A387'); // (coral) set the default backgrcolor
+
+  const auth = getAuth();
+
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then(result => {
+        navigation.navigate("Chat", {
+          userID: result.user.uid, 
+          name: name, 
+          backgroundColor: backgroundColor
+        });
+        // Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, try later again.", error);
+      })
+  }
+
 
   return (    
     // <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
@@ -113,7 +132,8 @@ const Start = ({ navigation }) => {
             title="Start Chatting"
             accessibilityLabel="Confirm the swithch to the chat option"
             accessibilityRole="button"
-            onPress={() => navigation.navigate('Chat', { name: name, backgroundColor: backgroundColor } )}
+            // onPress={() => navigation.navigate('Chat', { name: name, backgroundColor: backgroundColor } )}
+            onPress={signInUser}
           >
             <Text style={styles.startChattingButtonText}>Start Chatting</Text>
           </TouchableOpacity>
