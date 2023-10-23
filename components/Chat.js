@@ -2,58 +2,68 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { GiftedChat, Bubble, SystemMessage, Day } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, SystemMessage, Day, isSameDay, InputToolbar } from 'react-native-gifted-chat';
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
   const { name, backgroundColor, userID } = route.params; // extracts the name and backgroundColor parameters from the route.params object.
-  
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]);    
 
-  // It's called when the component is mounted because the dependency array ([]) is empty. This means it will run only once after the initial render.
-  // It dynamically sets the title of the chat screen based on the user's name.
+  // outside the useEffect() in order not to lose the reference to the old unsubscribe function
+  let unsubMessages;
+  
   useEffect(()=> {
+    // It dynamically sets the title of the chat screen based on the user's name.
     navigation.setOptions({ title: name });
-    //  sets the state with a static message so that you’ll be able to see each element of the UI displayed on the screen right away
     
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    // onSnapshot() listener is created on a query that targets the messages collection. The createdAt property sorts the query results in descending order - orderBy("createdAt", "desc")
-    const unsubMessages = onSnapshot(q, (docs) => {
-      let newMessages = [];
-      docs.forEach(doc => {
-        newMessages.push({ 
-          id: doc.id, 
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis()),
-          // createdAt: message.data().createdAt.toDate(),
-        })
-      });
-      setMessages(newMessages);
-    });  
+    if (isConnected === true) {
+      // unregister current onSnapshot() listener to avoid registering multiple listeners when
+      // useEffect code is re-executed.
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
+
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+      // onSnapshot() listener is created on a query that targets the messages collection. The createdAt property sorts the query results in descending order - orderBy("createdAt", "desc")
+      unsubMessages = onSnapshot(q, (docs) => {
+        let newMessages = [];  
+        docs.forEach(doc => {
+          const messageData = doc.data();
+          const createdAt = new Date(messageData.createdAt.toMillis());            
+
+          newMessages.push({ 
+            _id: doc.id, 
+            ...messageData,
+            createdAt,
+          });        
+        });
+        cacheMessages(newMessages);
+        setMessages(newMessages);
+      });  
+    } else loadCachedMessages();
+
     // Clean up code
     return () => {
       if (unsubMessages) unsubMessages();
-    }    
-    // setMessages([
-    //   {
-    //     _id: 1,
-    //     text: "Hello developer",
-    //     createdAt: new Date(),
-    //     user: {
-    //       _id: 2,
-    //       name: "React Native",
-    //       avatar: "https://placeimg.com/140/140/any",
-    //     },
-    //   },
-    //   {
-    //     _id: 2,
-    //     // text: "This is a system message",
-    //     createdAt: new Date(),
-    //     system: true, // This property indicates that the message is a system message. System messages are typically used to display non-user-generated messages or notifications. For example, they can be used to show messages like "User A has joined the chat" or "User B has left the chat."
-    //   },
-    // ]);
-  }, []);
+    }     
+  }, [isConnected]);    // // Passing isConnected to the dependency array of useEffect(). As a result, Chat’s useEffect() callback function can be called multiple times (not once the component is mounted), as isConnected’s status can change at any time.
+  
+
+  // Uses AsyncStorage.setItem method to store the messagesToCache array as a JSON string under the 'messages' key
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(messagesToCache));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // This function is called if the isConnected prop false in useEffect(). Fetches the data from AsyncStorage
+  const loadCachedMessages = async () => {
+    const cachedMessages = await AsyncStorage.getItem('messages') || [];
+    setMessages(JSON.parse(cachedMessages));
+  };
 
 
   // GiftedChat onSend function
@@ -61,6 +71,9 @@ const Chat = ({ route, navigation, db }) => {
     // setMessages(previousMessages => GiftedChat.append(previousMessages, newMessage)) 
     addDoc(collection(db, "messages"), newMessages[0]); // the addDoc() Firestore function to save the passed message to the function in the database. The message to be added is the first item in the newMessages array (newMessages[0])
   }
+
+  const renderInputToolbar = (props) => 
+    (isConnected ? <InputToolbar {...props} /> : null);  
 
   const renderSystemMessage = (props) => {
     return <SystemMessage
@@ -100,6 +113,7 @@ const Chat = ({ route, navigation, db }) => {
     {/* // Gifted Chat provides its own component, GiftedChat, that comes with its own props */}
     <GiftedChat 
       messages={messages}
+      renderInputToolbar={renderInputToolbar}
       renderBubble={renderBubble}
       renderSystemMessage={renderSystemMessage}
       renderDay={renderDay}
@@ -108,6 +122,7 @@ const Chat = ({ route, navigation, db }) => {
         //_id: 1
         _id: userID, // User ID from route.params
         name: name, // Name from route.params
+        avatar: "https://placeimg.com/140/140/any",
       }}
       placeholder="Type your message here..."
 
