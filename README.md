@@ -1,8 +1,10 @@
 # React Native Chat App
 
-![App Screenshot](screenshot.png)
-
 A mobile chat application built with React Native and Expo, offering real-time chat, image sharing, and location sharing features. This app provides an accessible chat interface for users to communicate with friends and family.
+
+Screenshot:
+
+<img src="https://github.com/nastja4/chat_app/assets/126527606/37764c9d-e46c-4fca-ae12-18acae21079a" alt="WhatsApp Image 2023-10-22 at 17:03:09" width="250">
 
 ## Table of Contents
 
