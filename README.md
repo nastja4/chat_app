@@ -4,7 +4,9 @@ A mobile chat application built with React Native and Expo, offering real-time c
 
 Screenshot:
 
-<img src="https://github.com/nastja4/chat_app/assets/126527606/37764c9d-e46c-4fca-ae12-18acae21079a" alt="WhatsApp Image 2023-10-22 at 17:03:09" width="250">
+<img src="https://github.com/nastja4/chat_app/assets/126527606/37764c9d-e46c-4fca-ae12-18acae21079a" alt="Image" width="250">
+<img src="https://github.com/nastja4/chat_app/assets/126527606/96113e2d-fcd6-4b61-b5c3-ae29ed558294" alt="Image" width="250">
+<img src="https://github.com/nastja4/chat_app/assets/126527606/20a155a7-581c-409c-8287-cb14e09b4973" alt="Image" width="250">
 
 ## Table of Contents
 
@@ -49,10 +51,9 @@ Before you begin, ensure you have the following tools and accounts set up:
 - Node.js (version 16.19.0 recommended)
 - Expo CLI: You can install it globally with npm using the following command:
 
-    ```
-    npm install -g expo-cli
-    ```
-
+```
+npm install -g expo-cli
+```
 - Expo Go App: Install the Expo Go app on your mobile device from the relevant app store (iOS or Android).
 
 - Expo Account: Create an Expo account by visiting the [Expo signup page](https://expo.dev/signup).
@@ -64,16 +65,52 @@ Before you begin, ensure you have the following tools and accounts set up:
 2. Navigate to the project directory in your terminal.
 
 3. Run the following command to install project dependencies:
+```
+npm install
+```
 
-    ```
-    npm install
-    ```
+You'll need to install React Navigation and related dependencies to enable screen navigation and other features. Run the following command in your project directory:
 
-You'll need to install React Navigation and related dependencies to enable screen navigation. Run the following command in your project directory:
-
+\- React Navigation:
 ```
 npm install --save @react-navigation/native @react-navigation/native-stack
 expo install react-native-screens react-native-safe-area-context
+```
+
+\- Gifted Chat:
+```
+npm install react-native-gifted-chat --save
+```
+
+\- Firestore:
+```
+npm install firebase@10.3.1 --save
+```
+
+\- Local Storage in React Native:
+```
+expo install @react-native-async-storage/async-storage
+```
+
+\- NetInfo for Detecting a Network Connection:
+```
+expo install @react-native-community/netinfo
+```
+
+\- Expo’s Location API:
+```
+expo install expo-location
+expo install react-native-maps
+```
+
+\- Expo-media-library:
+```
+expo install expo-media-library
+```
+
+\- Expo's ImagePicker API:
+```
+expo install expo-image-picker
 ```
 
 ### Running the App
@@ -154,6 +191,48 @@ By following these steps, you can run and test your app in either the Android em
 To customize the app, open the `App.js` file and make changes to the code. Save your changes, and the app will automatically update on your mobile device.
 
 ## Dependencies
+
+```
+{
+  "name": "chat_app",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo/webpack-config": "^19.0.0",
+    "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-navigation/native": "^6.1.8",
+    "@react-navigation/native-stack": "^6.9.14",
+    "expo": "~49.0.13",
+    "expo-status-bar": "~1.6.0",
+    "firebase": "^10.3.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.72.6",
+    "react-native-gifted-chat": "^2.4.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-safe-area-context": "4.6.3",
+    "react-native-screens": "~3.22.0",
+    "react-native-svg": "13.9.0",
+    "react-native-vector-icons": "^10.0.0",
+    "react-native-web": "~0.19.6",
+    "@react-native-community/netinfo": "9.3.10",
+    "expo-location": "~16.1.0",
+    "react-native-maps": "1.7.1",
+    "expo-media-library": "~15.4.1",
+    "expo-image-picker": "~14.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}
+```
 
 - [React Native](https://reactnative.dev/): A framework for building native mobile applications using JavaScript and React.
 - [Expo](https://expo.io/): An open-source framework and platform for building React Native applications.
