@@ -13,7 +13,6 @@ LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNetInfo }from '@react-native-community/netinfo';
 import { getStorage } from "firebase/storage";
@@ -37,10 +36,6 @@ const App = () => {
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);  
-
-  // const auth = initializeAuth(app, {
-  //   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-  // });
 
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);

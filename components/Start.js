@@ -152,7 +152,6 @@ const Start = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-
   mainContainer: {
     flex: 1,
   },

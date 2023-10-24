@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert } from 'react-native';
 import { TouchableOpacity } from "react-native";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,13 +8,9 @@ import * as Location from 'expo-location';
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
 
-const CustomActions = ({ 
-  wrapperStyle, 
-  iconTextStyle, 
-  onSend,
-  storage,
-  userID
-  }) => {
+const CustomActions = ({ wrapperStyle, iconTextStyle, 
+  onSend, storage, userID }) => {
+
   const actionSheet = useActionSheet(); 
   
   const onActionPress = () => {
@@ -41,6 +36,7 @@ const CustomActions = ({
             return;
           case 2:
             getLocation();
+            return;
           default:
         }
       },      
@@ -60,7 +56,7 @@ const CustomActions = ({
     const uniqueRefString = generateReference(imageURI);
     const newUploadRef = ref(storage, uniqueRefString);
     const response = await fetch(imageURI);
-    const blob = await response.blob();  // The conversion of the fetched from the given URI content (a picked image) from the given URI to a blog
+    const blob = await response.blob();  // The conversion of the fetched from the given URI content (a picked image) from the given URI to a blob (a “binary large object”)
     uploadBytes(newUploadRef, blob).then(async (snapshot) => {
       const imageURL = await getDownloadURL(snapshot.ref);
       onSend({ image: imageURL });
@@ -68,19 +64,33 @@ const CustomActions = ({
   };
 
   const pickImage = async () => {
-    let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissions?.granted) {
-      let result = await ImagePicker.launchImageLibraryAsync();
-      if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);        
-      else Alert.alert("Permissions haven't been granted.");
+    try {
+      let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  
+      if (permissions?.granted) {
+        let result = await ImagePicker.launchImageLibraryAsync();
+  
+        if (!result.canceled) {
+          await uploadAndSendImage(result.assets[0].uri);
+        } else {
+          // User canceled image selection
+          Alert.alert('Image selection canceled', 'You did not select an image.');
+        }
+      } else {
+        // Permissions haven't been granted
+        Alert.alert('Permission denied', 'You need to grant access to the media library to select an image.');
+      }
+    } catch (error) {
+      // Handle any unexpected errors here
+      console.error('An error occurred:', error);
     }
-  };
+  };  
 
   const takePhoto = async () => {
     let permissions = await ImagePicker.requestCameraPermissionsAsync();
     if (permissions?.granted) {
       let result = await ImagePicker.launchCameraAsync();
-      if (!result.canceled) await uploadAndSendImage(result.assets[0].uri); 
+      if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);  
       else Alert.alert("Permissions haven't been granted.");
     }
   };
@@ -102,9 +112,13 @@ const CustomActions = ({
 
   return (
     //  TouchableOpacity’s used as a wrapper that reduces the button’s opacity when it’s pressed down
-    <TouchableOpacity 
+    <TouchableOpacity     
       style={styles.container} 
       onPress={onActionPress}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: false }}
+      accessibilityLabel="Open Action Menu with the options for fotos and location 'Choose from Library',
+        'Take Picture', 'Send Location', 'Cancel'"    
     > 
       <View style={[styles.wrapper, wrapperStyle]}>
         <Text style={[styles.iconText, iconTextStyle]}>+</Text>

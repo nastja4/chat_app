@@ -13,21 +13,24 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const { name, backgroundColor, userID } = route.params; // extracts the name and backgroundColor parameters from the route.params object.
   const [messages, setMessages] = useState([]);    
 
+
+  useEffect(() => {
+    // It dynamically sets the title of the chat screen based on the user's name.
+    navigation.setOptions({ title: name });
+  }, []);
+
   // outside the useEffect() in order not to lose the reference to the old unsubscribe function
   let unsubMessages;
   
-  useEffect(()=> {
-    // It dynamically sets the title of the chat screen based on the user's name.
-    navigation.setOptions({ title: name });
-    
+  // Whenever a new message is added to the Firestore database, the listener onSnapshot() detects the change and updates the chat interface in real-time, ensuring that all users see the latest messages as they are sent
+  useEffect(()=> {    
     if (isConnected === true) {
-      // unregister current onSnapshot() listener to avoid registering multiple listeners when
-      // useEffect code is re-executed.
+      // unregister current onSnapshot() listener to avoid registering multiple listeners when useEffect code is re-executed.
       if (unsubMessages) unsubMessages();
       unsubMessages = null;
 
       const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-      // onSnapshot() listener is created on a query that targets the messages collection. The createdAt property sorts the query results in descending order - orderBy("createdAt", "desc")
+      // The createdAt property sorts the query results in descending order - orderBy("createdAt", "desc")
       unsubMessages = onSnapshot(q, (docs) => {
         let newMessages = [];  
         docs.forEach(doc => {
@@ -120,7 +123,11 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
   };
 
   const renderCustomActions = (props) => {
-    return <CustomActions storage={storage} userID={userID} {...props} />;
+    return <CustomActions 
+      storage={storage} 
+      userID={userID} 
+      onSend={onSend}
+      {...props} />;
   }
 
   // renders the map in a message bubble
@@ -128,18 +135,25 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     const { currentMessage } = props;
     if (currentMessage.location) {
       return (
-        <MapView
-          style={{width: 150,
-            height: 100,
-            borderRadius: 13,
-            margin: 3}}
-          region={{
-            latitude: currentMessage.location.latitude,
-            longitude: currentMessage.location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        />
+        <View
+        style={{
+          width: 150,
+          height: 100,
+          borderRadius: 13,
+          margin: 3,
+          overflow: 'hidden', // ensure the borderRadius is applied
+        }}
+        >
+          <MapView
+            style={{ flex: 1 }}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+        </View>
       );
     }
     return null;
@@ -173,7 +187,6 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
    </View>
  );
 }
-
 
 const styles = StyleSheet.create({
  container: {
