@@ -1,7 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
 import React, { useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import Start from './components/Start';
 import Chat from './components/Chat';
 import { NavigationContainer } from '@react-navigation/native';
@@ -16,7 +14,9 @@ LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { useNetInfo }from '@react-native-community/netinfo';
+import { getStorage } from "firebase/storage";
 
 
 // Create the navigator
@@ -24,8 +24,6 @@ const Stack = createNativeStackNavigator();
 
 
 const App = () => {
-  const connectionStatus = useNetInfo();
-
 
   // web app's Firebase configuration
   const firebaseConfig = {
@@ -38,7 +36,7 @@ const App = () => {
   };
 
   // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);  
 
   // const auth = initializeAuth(app, {
   //   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
@@ -47,6 +45,9 @@ const App = () => {
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
 
+  const storage = getStorage(app);
+
+  const connectionStatus = useNetInfo();
 
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
@@ -68,11 +69,17 @@ const App = () => {
           options={{ headerShown: false }} />
         {/* The title in the app bar for the "Chat" screen will be based on the name parameter that you pass when navigating to the "Chat" screen */}
         <Stack.Screen 
-          name="Chat" 
-          // component={Chat} 
+          name="Chat"       
           options={({ route }) => ({ title: route.params.name })}          
         > 
-          {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
+          {props => 
+            <Chat 
+              isConnected={connectionStatus.isConnected} 
+              db={db} 
+              storage={storage}
+              {...props} 
+            />
+          }
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

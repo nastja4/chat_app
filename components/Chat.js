@@ -5,9 +5,11 @@ import { StyleSheet, View, Text, KeyboardAvoidingView, Platform, Alert } from 'r
 import { GiftedChat, Bubble, SystemMessage, Day, isSameDay, InputToolbar } from 'react-native-gifted-chat';
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const { name, backgroundColor, userID } = route.params; // extracts the name and backgroundColor parameters from the route.params object.
   const [messages, setMessages] = useState([]);    
 
@@ -36,6 +38,16 @@ const Chat = ({ route, navigation, db, isConnected }) => {
             _id: doc.id, 
             ...messageData,
             createdAt,
+
+            // _id: 1,
+            // text: 'My message',
+            // createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
+            // user: {
+            //   _id: 2,
+            //   name: 'React Native',
+            //   avatar: 'https://facebook.github.io/react-native/img/header_logo.png',
+            // },
+            // image: 'https://facebook.github.io/react-native/img/header_logo.png',
           });        
         });
         cacheMessages(newMessages);
@@ -47,7 +59,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     return () => {
       if (unsubMessages) unsubMessages();
     }     
-  }, [isConnected]);    // // Passing isConnected to the dependency array of useEffect(). As a result, Chat’s useEffect() callback function can be called multiple times (not once the component is mounted), as isConnected’s status can change at any time.
+  }, [isConnected]);    // Passing isConnected to the dependency array of useEffect(). As a result, Chat’s useEffect() callback function can be called multiple times (not once the component is mounted), as isConnected’s status can change at any time.
   
 
   // Uses AsyncStorage.setItem method to store the messagesToCache array as a JSON string under the 'messages' key
@@ -59,7 +71,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     }
   };
 
-  // This function is called if the isConnected prop false in useEffect(). Fetches the data from AsyncStorage
+  // This function is called if the isConnected prop is false in useEffect(). Fetches the data from AsyncStorage
   const loadCachedMessages = async () => {
     const cachedMessages = await AsyncStorage.getItem('messages') || [];
     setMessages(JSON.parse(cachedMessages));
@@ -107,22 +119,50 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     />
   };
 
+  const renderCustomActions = (props) => {
+    return <CustomActions storage={storage} userID={userID} {...props} />;
+  }
+
+  // renders the map in a message bubble
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3}}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
 
  return (
    <View style={[styles.container, { backgroundColor: backgroundColor }]}>    
     {/* // Gifted Chat provides its own component, GiftedChat, that comes with its own props */}
     <GiftedChat 
-      messages={messages}
+      messages={messages}      
       renderInputToolbar={renderInputToolbar}
       renderBubble={renderBubble}
       renderSystemMessage={renderSystemMessage}
       renderDay={renderDay}
       onSend={messages => onSend(messages)}
+      renderActions={renderCustomActions}
+      renderCustomView={renderCustomView}
       user={{
         //_id: 1
         _id: userID, // User ID from route.params
         name: name, // Name from route.params
-        avatar: "https://placeimg.com/140/140/any",
+        // avatar: "https://placeimg.com/140/140/any",
       }}
       placeholder="Type your message here..."
 
