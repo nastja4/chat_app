@@ -5,7 +5,9 @@ A mobile chat application built with React Native and Expo, offering real-time c
 Screenshot:
 
 <img src="https://github.com/nastja4/chat_app/assets/126527606/37764c9d-e46c-4fca-ae12-18acae21079a" alt="Image" width="250">
+
 <img src="https://github.com/nastja4/chat_app/assets/126527606/96113e2d-fcd6-4b61-b5c3-ae29ed558294" alt="Image" width="250">
+
 <img src="https://github.com/nastja4/chat_app/assets/126527606/20a155a7-581c-409c-8287-cb14e09b4973" alt="Image" width="250">
 
 ## Table of Contents
