@@ -2,7 +2,7 @@
 
 A mobile chat application built with React Native and Expo, offering real-time chat, image sharing, and location sharing features. This app provides an accessible chat interface for users to communicate with friends and family.
 
-Screenshot:
+Screenshots:
 
 <img src="https://github.com/nastja4/chat_app/assets/126527606/37764c9d-e46c-4fca-ae12-18acae21079a" alt="Image" width="250">
 
